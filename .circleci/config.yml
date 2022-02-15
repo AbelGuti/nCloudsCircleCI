@@ -8,8 +8,24 @@ jobs:
       - run:
           name: "Say hello"
           command: "echo Hello, World!!"
+  say-goodbye:
+    docker:
+      - image: cimg/base:stable
+    steps:
+      - run:
+          name: "Say goodbye"
+          command: "echo goodbye, World!!"
 
 workflows:
   say-hello-workflow:
     jobs:
-      - say-hello
+      - say-hello:
+          filters:
+            branches:
+              only:
+                - master
+      - say-goodbye:
+          filters:
+            branches:
+              only:
+                - master
