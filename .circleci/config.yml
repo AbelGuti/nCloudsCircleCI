@@ -1,8 +1,7 @@
 version: 2.1
 jobs:
   build-push:
-    docker:
-      - image: cimg/base:stable
+    machine: true
     steps:
       - checkout
       - run:
