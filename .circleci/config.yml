@@ -1,6 +1,6 @@
 version: 2.1
 jobs:
-  build-&-push:
+  build-push:
     docker:
       - image: cimg/base:stable
     steps:
@@ -23,7 +23,7 @@ jobs:
 workflows:
   chat-workflow:
     jobs:
-      - build-&-push:
+      - build-push:
           filters:
             branches:
               only:
