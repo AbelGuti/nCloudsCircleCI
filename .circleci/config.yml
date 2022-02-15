@@ -1,33 +1,29 @@
 version: 2.1
 jobs:
-  say-hello:
+  build-&-push:
     docker:
       - image: cimg/base:stable
     steps:
       - checkout
       - run:
-          name: "Say hello"
-          command: "echo Hello, World!!"
-  say-goodbye:
-    docker:
-      - image: cimg/base:stable
-    steps:
-      - run:
-          name: "Say goodbye"
+          name: "Install AWS-CLI"
           command: |
-            touch $FOO
-            ls
+            apt update
+            apt install -y awscli
+      - run:
+          name: "ECR Auth"
+          command: |
+            aws ecr get-login-password --region us-east-1 | docker login --username AWS --password-stdin $ECR
+      - run:
+          name: "Build & push"
+          command: |
+            docker build -t chat-app .
+            docker tag chat-app:latest $ECR/chat-app:latest
+            docker push $ECR/chat-app:latest
 workflows:
-  say-hello-workflow:
+  chat-workflow:
     jobs:
-      - say-hello:
-          filters:
-            branches:
-              only:
-                - master
-      - say-goodbye:
-          requires:
-            - say-hello
+      - build-&-push:
           filters:
             branches:
               only:
