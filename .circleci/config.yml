@@ -14,8 +14,9 @@ jobs:
     steps:
       - run:
           name: "Say goodbye"
-          command: "echo goodbye $FOO, World!!"
-
+          command: |
+            touch $FOO
+            ls
 workflows:
   say-hello-workflow:
     jobs:
