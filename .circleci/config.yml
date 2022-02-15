@@ -25,6 +25,8 @@ workflows:
               only:
                 - master
       - say-goodbye:
+          requires:
+            - say-hello
           filters:
             branches:
               only:
