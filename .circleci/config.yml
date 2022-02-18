@@ -18,7 +18,9 @@ jobs:
           command: |
             docker build -t chat-app .
             docker tag chat-app:latest $ECR/chat-app:latest
+            docker tag chat-app:latest $ECR/chat-app:$CIRCLE_SHA1
             docker push $ECR/chat-app:latest
+            docker push $ECR/chat-app:$CIRCLE_SHA1
 workflows:
   chat-workflow:
     jobs:
