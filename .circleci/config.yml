@@ -21,10 +21,32 @@ jobs:
             docker tag chat-app:latest $ECR/chat-app:$CIRCLE_SHA1
             docker push $ECR/chat-app:latest
             docker push $ECR/chat-app:$CIRCLE_SHA1
+  deployecs:
+    machine: true
+    steps:
+      - run:
+          name: install aws & ecs-deploy
+          command: |
+            curl "https://s3.amazonaws.com/aws-cli/awscli-bundle-1.16.312.zip" -o "awscli-bundle.zip"
+            unzip awscli-bundle.zip
+            sudo ./awscli-bundle/install -i /usr/local/aws -b /usr/local/bin/aws
+            sudo wget "https://raw.githubusercontent.com/silinternational/ecs-deploy/develop/ecs-deploy" -O /usr/local/bin/ecs-deploy
+            sudo chmod +x /usr/local/bin/ecs-deploy
+      - run:
+          name: deploying to ECS
+          command: |
+            ecs-deploy --region us-east-1 --cluster nclouds --service-name chat-app --image $ECR/chat-app:$CIRCLE_SHA1 --timeout 1800
 workflows:
   chat-workflow:
     jobs:
       - build-push:
+          filters:
+            branches:
+              only:
+                - master
+      - deployecs:
+          requires:
+            - build-push
           filters:
             branches:
               only:
